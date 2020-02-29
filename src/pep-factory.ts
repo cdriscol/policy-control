@@ -74,9 +74,11 @@ export class PEPFactory<UserT, ResourceT, ContextT extends object> implements IP
         this.validate();
         const pdp = new DenyOverGrantPDP(this._prps);
 
+        // this ugly check is required for TS to be happy
         if (!this._user || !this._resource || !this._action || !this._resourceType) {
             throw new Error();
         }
+
         const request: IAuthorizationRequest<UserT, ResourceT> = {
             user: this._user,
             resource: this._resource,
