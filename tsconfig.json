@@ -1,0 +1,37 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "typeRoots": ["node_modules/@types", "src/@types"],
+        "declaration": true,
+        "declarationDir": "./lib",
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "removeComments": false,
+        "noLib": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "lib": ["ES2017"],
+        "sourceMap": false,
+        "pretty": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "allowJs": false,
+        "noImplicitAny": false,
+        "suppressImplicitAnyIndexErrors": true,
+        "noImplicitReturns": true,
+        "noImplicitUseStrict": false,
+        "noFallthroughCasesInSwitch": true,
+        "strict": true,
+        "types": [
+            "node"
+        ],
+        "outDir": "./lib",
+        "baseUrl": "./src"
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": [
+        "node_modules",
+        "lib",
+    ]
+}
