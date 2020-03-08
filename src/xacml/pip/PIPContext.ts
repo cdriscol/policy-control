@@ -1,4 +1,5 @@
 import { IPIPConfig } from "./IPIPConfig";
+import logger from "../../logger";
 
 export interface IPIPContext<U, R> {
     setPip<T = any>(pip: IPIPConfig<U, R>, data: T): void;
@@ -24,6 +25,7 @@ export default class PIPContext<U, R> implements IPIPContext<U, R> {
                 `You cannot set pip data twice for the same key ${key}, consider using IPIP.key to create a unique key`,
             );
         }
+        logger.debug(`PIPContext.setPip key:${key} data:${JSON.stringify(data)}`);
         this._data.set(key, data);
     }
 
@@ -34,12 +36,16 @@ export default class PIPContext<U, R> implements IPIPContext<U, R> {
                 `Attempting to get data for key ${key}, but no data exists. Make sure you have loaded the ${pip.name} PIP before you make this call.`,
             );
         }
-        return this._data.get(key);
+        const data = this._data.get(key);
+        logger.debug(`PIPContext.getPip key:${key} data:${JSON.stringify(data)}`);
+        return data;
     }
 
     hasPip(pip: IPIPConfig<U, R>): boolean {
         const key = this.getKey(pip);
-        return this._data.has(key);
+        const result = this._data.has(key);
+        logger.debug(`PIPContext.hasPip key:${key} result:${result}`);
+        return result;
     }
 
     private getKey(pip: IPIPConfig<U, R>): string {

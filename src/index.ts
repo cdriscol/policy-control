@@ -2,6 +2,11 @@
 export { IPolicyConfig, IRuleConfig, IPIPConfig, IAuthorizationRequest } from "./xacml";
 import PolicyControl from "./PolicyControl";
 import createPolicyControl from "./createPolicyControl";
+import logger, { ILogLevel } from "./logger";
+
+export function setLogLevel(level: ILogLevel): void {
+    logger.setLogLevel(level);
+}
 
 export { PolicyControl };
 export default createPolicyControl;

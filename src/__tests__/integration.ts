@@ -5,9 +5,12 @@ import * as chai from "chai";
 // import { and, or } from "../../lib/rules";
 
 // test sources
-import pc, { IPIPConfig, IAuthorizationRequest, IRuleConfig, IPolicyConfig } from "../index";
+import pc, { IPIPConfig, IAuthorizationRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
 import { and, or } from "../rules";
 import { PermissionResponse } from "../xacml/AuthorizationResponse";
+
+// debug tests
+setLogLevel("debug");
 
 type User = {
     id: string;
@@ -32,12 +35,13 @@ const pip1: IPIPConfig<User, Resource> = {
     key: (name, user, resource) => `${name}:${user.id}:${resource.id}`,
     resolve: async (req: IAuthorizationRequest<User, Resource>): Promise<{ data: string }> => {
         const prePipData = req.context.getPip(prePip1);
-        chai.expect(prePipData).to.equal({ preData: "test" });
+        chai.expect(prePipData).to.contain({ preData: "test" });
         return { data: "test" };
     },
 };
 
 const rule1: IRuleConfig<User, Resource> = {
+    name: "rule1",
     pips: [pip1],
     evaluate: async (req: IAuthorizationRequest<User, Resource>) => {
         const result = req.context.getPip<{ data: string }>(pip1).data === "test";
@@ -47,15 +51,18 @@ const rule1: IRuleConfig<User, Resource> = {
 };
 
 const nullRule: IRuleConfig<User, Resource> = {
+    name: "nullRule",
     evaluate: async () => null,
 };
 
 const falseRule: IRuleConfig<User, Resource> = {
+    name: "falseRule",
     evaluate: async () => false,
 };
 
 const policy1: IPolicyConfig<User, Resource> = {
-    resourceTypes: ["something"],
+    name: "policy1",
+    resourceTypes: ["something", "test"],
     actionTypes: ["create"],
     rules: [and([rule1, or([nullRule, falseRule])])],
 };

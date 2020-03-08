@@ -5,6 +5,7 @@ import { IAuthorizationResponse } from "./xacml/AuthorizationResponse";
 import { IAuthorizationRequest } from "./xacml/IAuthorizationRequest";
 import { PIPContext } from "./xacml/pip";
 import { MissingAuthorizeDataError } from "./xacml/errors/missingAuthorizeDataError";
+import logger from "./logger";
 
 export type IResourceType = string | number;
 export interface IPolicyControlOptions<U, R> {
@@ -44,36 +45,43 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
     }
 
     public policies(policies: IPolicyConfig<U, R>[]) {
+        logger.debug(`PolicyControl.policies ${JSON.stringify(policies)}`);
         this._policies = policies;
         return this;
     }
 
     public user(user: U) {
+        logger.debug(`PolicyControl.user ${JSON.stringify(user)}`);
         this._user = user;
         return this;
     }
 
     public action(action: AuthorizationActions) {
+        logger.debug(`PolicyControl.action ${JSON.stringify(action)}`);
         this._action = action;
         return this;
     }
 
     public resource(resource: R) {
+        logger.debug(`PolicyControl.resource ${JSON.stringify(resource)}`);
         this._resource = resource;
         return this;
     }
 
     public pdp(pdp: IPDP) {
+        logger.debug(`PolicyControl.pdp ${JSON.stringify(pdp)}`);
         this._pdp = pdp;
         return this;
     }
 
     public resourceType(resourceType: IResourceType) {
+        logger.debug(`PolicyControl.resourceType ${JSON.stringify(resourceType)}`);
         this._resourceType = resourceType;
         return this;
     }
 
     public authorize(options: Partial<IPolicyControlOptions<U, R>> = {}): Promise<IAuthorizationResponse> {
+        logger.debug(`PolicyControl.authorize ${JSON.stringify(options)}`);
         this.validate(options);
 
         const policies = options.policies || this._policies;
@@ -96,7 +104,11 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
             context: new PIPContext(user, resource),
         };
 
-        return pdp(request, filterPolicies(policies, resourceType, action));
+        const filteredPolicies = filterPolicies(policies, resourceType, action);
+        if (!filteredPolicies.length) {
+            logger.warn(`Attempting authorization without policies`);
+        }
+        return pdp(request, filteredPolicies);
     }
 
     private validate(options: Partial<IPolicyControlOptions<U, R>> = {}): void {
@@ -108,7 +120,10 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         if (!(options.action || this._action)) missingFields.push("action");
 
         if (missingFields.length) {
+            logger.debug(`PolicyControl.validate INVALID missing fields (${missingFields.join(",")})`);
             throw new MissingAuthorizeDataError(missingFields);
         }
+
+        logger.debug(`PolicyControl.validate VALID`);
     }
 }
