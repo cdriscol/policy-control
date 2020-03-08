@@ -1,6 +1,6 @@
-import { IAuthorizationRequest } from "../../IAuthorizationRequest";
 import { IPIPConfig } from "./IPIPConfig";
-import logger from "../../../logger";
+import { IAuthorizationRequest } from "../IAuthorizationRequest";
+import logger from "../../logger";
 
 export default async function resolvePips<U, R>(
     configs: IPIPConfig<U, R>[] = [],

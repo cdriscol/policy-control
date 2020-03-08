@@ -1,4 +1,4 @@
-import { IPIPConfig } from "./pip";
+import { IPIPConfig } from "../pip";
 import { IAuthorizationRequest } from "../IAuthorizationRequest";
 
 export interface IRuleConfig<U, R> {

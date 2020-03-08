@@ -1,5 +1,5 @@
 import { IPIPConfig } from "./IPIPConfig";
-import logger from "../../../logger";
+import logger from "../../logger";
 
 export interface IPIPContext<U, R> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

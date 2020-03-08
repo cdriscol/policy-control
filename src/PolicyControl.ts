@@ -7,6 +7,8 @@ import {
     IAuthorizationResponse,
     PIPContext,
     MissingAuthorizeDataError,
+    IPIPConfig,
+    resolvePips,
 } from "./xacml";
 import { denyOverGrant } from "./deciders";
 import logger from "./logger";
@@ -19,6 +21,7 @@ export interface IPolicyControlOptions<U, R> {
     resourceType: IResourceType;
     action: AuthorizationActions;
     decider: IDecider;
+    pips: IPIPConfig<U, R>[];
 }
 
 export interface IPolicyControl<U, R> {
@@ -38,6 +41,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
     private _resourceType: IResourceType | undefined;
     private _action: AuthorizationActions | undefined;
     private _pdp: IDecider;
+    private _pips: IPIPConfig<U, R>[];
 
     constructor(options: Partial<IPolicyControlOptions<U, R>> = {}) {
         this._policies = options.policies || [];
@@ -46,11 +50,18 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         this._resourceType = options.resourceType;
         this._action = options.action;
         this._pdp = options.decider || denyOverGrant;
+        this._pips = options.pips || [];
     }
 
     public policies(policies: IPolicyConfig<U, R>[]) {
         logger.debug(`PolicyControl.policies ${JSON.stringify(policies)}`);
         this._policies = policies;
+        return this;
+    }
+
+    public pips(pips: IPIPConfig<U, R>[]) {
+        logger.debug(`PolicyControl.pips ${JSON.stringify(pips)}`);
+        this._pips = pips;
         return this;
     }
 
@@ -84,7 +95,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         return this;
     }
 
-    public authorize(options: Partial<IPolicyControlOptions<U, R>> = {}): Promise<IAuthorizationResponse> {
+    public async authorize(options: Partial<IPolicyControlOptions<U, R>> = {}): Promise<IAuthorizationResponse> {
         logger.debug(`PolicyControl.authorize ${JSON.stringify(options)}`);
         this.validate(options);
 
@@ -94,6 +105,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         const resourceType = options.resourceType || this._resourceType;
         const action = options.action || this._action;
         const decider = options.decider || this._pdp;
+        const pips = [...(options.pips || []), ...(this._pips || [])];
 
         // this ugly check is required for TS to be happy
         if (!user || !resource || !action || !resourceType) {
@@ -107,6 +119,8 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
             action,
             context: new PIPContext(user, resource),
         };
+
+        await resolvePips(pips, request);
 
         const filteredPolicies = filterPolicies(policies, resourceType, action);
         if (!filteredPolicies.length) {
