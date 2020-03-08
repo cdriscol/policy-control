@@ -1,12 +1,16 @@
-import { IPDP } from "./IPDP";
-import { IAuthorizationRequest } from "../IAuthorizationRequest";
-import { IPolicyConfig, evaluatePolicy } from "../policy";
-import { IAuthorizationResponse, PermissionResponse } from "../AuthorizationResponse";
-import logger from "../../logger";
+import {
+    IPolicyConfig,
+    IAuthorizationRequest,
+    IDecider,
+    IAuthorizationResponse,
+    PermissionResponse,
+    evaluatePolicy,
+} from "../xacml";
+import logger from "../logger";
 
-const denyOverGrantPDP: IPDP = async <U, R>(
-    request: IAuthorizationRequest<U, R>,
+const denyOverGrant: IDecider = async <U, R>(
     policies: IPolicyConfig<U, R>[],
+    request: IAuthorizationRequest<U, R>,
 ): Promise<IAuthorizationResponse> => {
     logger.debug(`denyOverGrantPDP policies:${JSON.stringify(policies)}, request:${JSON.stringify(request)}`);
     const authResponse = await policies
@@ -30,4 +34,4 @@ const denyOverGrantPDP: IPDP = async <U, R>(
     return result;
 };
 
-export default denyOverGrantPDP;
+export default denyOverGrant;

@@ -1,5 +1,5 @@
 import { AuthorizationActions } from "./AuthorizationActions";
-import { IPIPContext } from "./pip";
+import { IPIPContext } from "./rule/pip";
 
 export interface IAuthorizationRequest<U, R> {
     user: U;

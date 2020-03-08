@@ -1,10 +1,14 @@
-import { filterPolicies, IPolicyConfig } from "./xacml/policy";
-import { AuthorizationActions } from "./xacml/AuthorizationActions";
-import { IPDP, denyOverGrantPDP } from "./xacml/pdp";
-import { IAuthorizationResponse } from "./xacml/AuthorizationResponse";
-import { IAuthorizationRequest } from "./xacml/IAuthorizationRequest";
-import { PIPContext } from "./xacml/pip";
-import { MissingAuthorizeDataError } from "./xacml/errors/MissingAuthorizeDataError";
+import {
+    filterPolicies,
+    IPolicyConfig,
+    IDecider,
+    AuthorizationActions,
+    IAuthorizationRequest,
+    IAuthorizationResponse,
+    PIPContext,
+    MissingAuthorizeDataError,
+} from "./xacml";
+import { denyOverGrant } from "./deciders";
 import logger from "./logger";
 
 export type IResourceType = string | number;
@@ -14,14 +18,14 @@ export interface IPolicyControlOptions<U, R> {
     resource: R;
     resourceType: IResourceType;
     action: AuthorizationActions;
-    pdp: IPDP;
+    decider: IDecider;
 }
 
 export interface IPolicyControl<U, R> {
     user(user: U): this;
     resource(resource: R): this;
     policies(policies: IPolicyConfig<U, R>[]): this;
-    pdp(pdp: IPDP): this;
+    decider(decider: IDecider): this;
     action(action: AuthorizationActions): this;
     resourceType(resourceType: IResourceType): this;
     authorize(): Promise<IAuthorizationResponse>;
@@ -33,7 +37,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
     private _resource: R | undefined;
     private _resourceType: IResourceType | undefined;
     private _action: AuthorizationActions | undefined;
-    private _pdp: IPDP;
+    private _pdp: IDecider;
 
     constructor(options: Partial<IPolicyControlOptions<U, R>> = {}) {
         this._policies = options.policies || [];
@@ -41,7 +45,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         this._resource = options.resource;
         this._resourceType = options.resourceType;
         this._action = options.action;
-        this._pdp = options.pdp || denyOverGrantPDP;
+        this._pdp = options.decider || denyOverGrant;
     }
 
     public policies(policies: IPolicyConfig<U, R>[]) {
@@ -68,9 +72,9 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         return this;
     }
 
-    public pdp(pdp: IPDP) {
-        logger.debug(`PolicyControl.pdp ${JSON.stringify(pdp)}`);
-        this._pdp = pdp;
+    public decider(decider: IDecider) {
+        logger.debug(`PolicyControl.decider ${JSON.stringify(decider)}`);
+        this._pdp = decider;
         return this;
     }
 
@@ -89,7 +93,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         const resource = options.resource || this._resource;
         const resourceType = options.resourceType || this._resourceType;
         const action = options.action || this._action;
-        const pdp = options.pdp || this._pdp;
+        const decider = options.decider || this._pdp;
 
         // this ugly check is required for TS to be happy
         if (!user || !resource || !action || !resourceType) {
@@ -108,7 +112,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         if (!filteredPolicies.length) {
             logger.warn(`Attempting authorization without policies`);
         }
-        return pdp(request, filteredPolicies);
+        return decider(filteredPolicies, request);
     }
 
     private validate(options: Partial<IPolicyControlOptions<U, R>> = {}): void {

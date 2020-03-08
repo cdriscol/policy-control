@@ -1,4 +1,4 @@
-import { IAuthorizationRequest } from "../IAuthorizationRequest";
+import { IAuthorizationRequest } from "../../IAuthorizationRequest";
 
 export interface IPIPConfig<U, R> {
     // unique name used to store data from resolve

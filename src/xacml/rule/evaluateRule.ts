@@ -1,4 +1,4 @@
-import { resolvePips } from "../pip";
+import { resolvePips } from "./pip";
 import { IAuthorizationRequest } from "../IAuthorizationRequest";
 import { IRuleConfig } from "./IRuleConfig";
 import logger from "../../logger";
