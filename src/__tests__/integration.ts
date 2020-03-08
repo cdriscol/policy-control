@@ -10,7 +10,7 @@ import { and, or } from "../rules";
 import { PermissionResponse } from "../xacml/AuthorizationResponse";
 
 // debug tests
-// setLogLevel("debug");
+setLogLevel("info");
 
 type User = {
     id: string;
