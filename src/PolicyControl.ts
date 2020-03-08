@@ -4,7 +4,7 @@ import { IPDP, denyOverGrantPDP } from "./xacml/pdp";
 import { IAuthorizationResponse } from "./xacml/AuthorizationResponse";
 import { IAuthorizationRequest } from "./xacml/IAuthorizationRequest";
 import { PIPContext } from "./xacml/pip";
-import { MissingAuthorizeDataError } from "./xacml/errors/missingAuthorizeDataError";
+import { MissingAuthorizeDataError } from "./xacml/errors/MissingAuthorizeDataError";
 import logger from "./logger";
 
 export type IResourceType = string | number;
