@@ -40,8 +40,8 @@ const pip1: IPIPConfig<User, Resource> = {
     },
 };
 
-const rule1: IRuleConfig<User, Resource> = {
-    name: "rule1",
+const trueRule: IRuleConfig<User, Resource> = {
+    name: "trueRule",
     pips: [pip1],
     evaluate: async (req: IAuthorizationRequest<User, Resource>) => {
         const result = req.context.getPip<{ data: string }>(pip1).data === "test";
@@ -64,7 +64,7 @@ const policy1: IPolicyConfig<User, Resource> = {
     name: "policy1",
     resourceTypes: ["something", "test"],
     actionTypes: ["create"],
-    rules: [and([rule1, or([nullRule, falseRule])])],
+    rules: [and([trueRule, or([nullRule, falseRule])])],
 };
 
 const pep = pc<User, Resource>()

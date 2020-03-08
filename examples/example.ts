@@ -31,6 +31,7 @@ const rule3: IRuleConfig<User, Resource> = {
 };
 
 const policy1: IPolicyConfig<User, Resource> = {
+    name: "CreateSomething",
     resourceTypes: ["something"],
     actionTypes: ["create"],
     rules: [and([rule1, or([rule2, rule3])])],
@@ -39,7 +40,7 @@ const policy1: IPolicyConfig<User, Resource> = {
 pc<User, Resource>()
     .action("create")
     .resourceType("test")
-    .user({})
-    .resource({})
+    .user({ id: "userId" })
+    .resource({ id: "resourceId" })
     .policies([policy1])
     .authorize();
