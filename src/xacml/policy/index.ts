@@ -1,4 +1,5 @@
-import Policy, { IPolicy, IPolicyConfig } from "./Policy";
+import { IPolicyConfig } from "./IPolicyConfig";
 import filterPolicies from "./filterPolicies";
+import evaluatePolicy from "./evaluatePolicy";
 
-export { Policy, IPolicy, IPolicyConfig, filterPolicies };
+export { IPolicyConfig, filterPolicies, evaluatePolicy };

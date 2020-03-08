@@ -1,4 +1,4 @@
-import { IPolicy, filterPolicies } from "./xacml/policy";
+import { filterPolicies, IPolicyConfig } from "./xacml/policy";
 import { AuthorizationActions } from "./xacml/AuthorizationActions";
 import { IPDP, denyOverGrantPDP } from "./xacml/pdp";
 import { IAuthorizationResponse } from "./xacml/AuthorizationResponse";
@@ -8,7 +8,7 @@ import { MissingAuthorizeDataError } from "./xacml/errors/missingAuthorizeDataEr
 
 export type IResourceType = string | number;
 export interface IPolicyControlOptions<U, R> {
-    policies: IPolicy<U, R>[];
+    policies: IPolicyConfig<U, R>[];
     user: U;
     resource: R;
     resourceType: IResourceType;
@@ -19,7 +19,7 @@ export interface IPolicyControlOptions<U, R> {
 export interface IPolicyControl<U, R> {
     user(user: U): this;
     resource(resource: R): this;
-    policies(policies: IPolicy<U, R>[]): this;
+    policies(policies: IPolicyConfig<U, R>[]): this;
     pdp(pdp: IPDP): this;
     action(action: AuthorizationActions): this;
     resourceType(resourceType: IResourceType): this;
@@ -27,7 +27,7 @@ export interface IPolicyControl<U, R> {
 }
 
 export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
-    private _policies: IPolicy<U, R>[];
+    private _policies: IPolicyConfig<U, R>[];
     private _user: U | undefined;
     private _resource: R | undefined;
     private _resourceType: IResourceType | undefined;
@@ -43,7 +43,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         this._pdp = options.pdp || denyOverGrantPDP;
     }
 
-    public policies(policies: IPolicy<U, R>[]) {
+    public policies(policies: IPolicyConfig<U, R>[]) {
         this._policies = policies;
         return this;
     }
@@ -73,33 +73,39 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         return this;
     }
 
-    public authorize(): Promise<IAuthorizationResponse> {
-        this.validate();
+    public authorize(options: Partial<IPolicyControlOptions<U, R>> = {}): Promise<IAuthorizationResponse> {
+        this.validate(options);
+
+        const policies = options.policies || this._policies;
+        const user = options.user || this._user;
+        const resource = options.resource || this._resource;
+        const resourceType = options.resourceType || this._resourceType;
+        const action = options.action || this._action;
+        const pdp = options.pdp || this._pdp;
 
         // this ugly check is required for TS to be happy
-        if (!this._user || !this._resource || !this._action || !this._resourceType) {
+        if (!user || !resource || !action || !resourceType) {
             throw new Error();
         }
 
         const request: IAuthorizationRequest<U, R> = {
-            user: this._user,
-            resource: this._resource,
-            resourceType: this._resourceType,
-            context: new PIPContext(this._user, this._resource),
-            action: this._action,
+            user,
+            resource,
+            resourceType,
+            action,
+            context: new PIPContext(user, resource),
         };
 
-        const filteredPolicies = filterPolicies(this._policies, request.resourceType, request.action);
-        return this._pdp(request, filteredPolicies);
+        return pdp(request, filterPolicies(policies, resourceType, action));
     }
 
-    private validate(): void {
+    private validate(options: Partial<IPolicyControlOptions<U, R>> = {}): void {
         const missingFields: string[] = [];
-        if (this._policies) missingFields.push("policies");
-        if (this._user) missingFields.push("user");
-        if (this._resource) missingFields.push("resource");
-        if (this._resourceType) missingFields.push("resourceType");
-        if (this._action) missingFields.push("action");
+        if (!(options.policies || this._policies)) missingFields.push("policies");
+        if (!(options.user || this._user)) missingFields.push("user");
+        if (!(options.resource || this._resource)) missingFields.push("resource");
+        if (!(options.resourceType || this._resourceType)) missingFields.push("resourceType");
+        if (!(options.action || this._action)) missingFields.push("action");
 
         if (missingFields.length) {
             throw new MissingAuthorizeDataError(missingFields);

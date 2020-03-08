@@ -22,6 +22,7 @@
     "build": "tsc -p tsconfig.build.json",
     "check-compilation": "tsc -p tsconfig.json",
     "test": "yarn ts-mocha ./src/__tests__/init.ts \"./src/**/__tests__/**/*.ts\"",
+    "test-watch": "yarn test -w",
     "ts-mocha": "mocha --exit -r ts-node/register",
     "lint": "eslint . --ext .ts",
     "lint-fix": "yarn lint --fix",

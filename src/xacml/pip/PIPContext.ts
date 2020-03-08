@@ -2,7 +2,7 @@ import { IPIPConfig } from "./IPIPConfig";
 
 export interface IPIPContext<U, R> {
     setPip<T = any>(pip: IPIPConfig<U, R>, data: T): void;
-    getPip<T = any>(pip: IPIPConfig<U, R>): Promise<T>;
+    getPip<T = any>(pip: IPIPConfig<U, R>): T;
     hasPip(pip: IPIPConfig<U, R>): boolean;
 }
 
@@ -27,7 +27,7 @@ export default class PIPContext<U, R> implements IPIPContext<U, R> {
         this._data.set(key, data);
     }
 
-    getPip<T = any>(pip: IPIPConfig<U, R>): Promise<T> {
+    getPip<T = any>(pip: IPIPConfig<U, R>): T {
         const key = this.getKey(pip);
         if (!this._data.has(key)) {
             throw new Error(

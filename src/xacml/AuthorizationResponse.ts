@@ -1,7 +1,7 @@
 export enum PermissionResponse {
-    Indeterminate = 1,
-    Allow = 2,
-    Deny = 3,
+    Indeterminate = "indeterminate",
+    Allow = "allow",
+    Deny = "deny",
 }
 
 export interface IAuthorizationResponse {

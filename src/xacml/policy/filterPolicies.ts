@@ -1,15 +1,15 @@
 import { AuthorizationActions } from "../AuthorizationActions";
-import { IPolicy } from "./Policy";
+import { IPolicyConfig } from "./IPolicyConfig";
 
 function policyMatchFilter<U, R>(resourceType: number | string, actionType: AuthorizationActions) {
-    return (policy: IPolicy<U, R>): boolean =>
+    return (policy: IPolicyConfig<U, R>): boolean =>
         policy.actionTypes.some(at => at === actionType) && policy.resourceTypes.some(rt => rt === resourceType);
 }
 
 export default function filterPolicies<U, R>(
-    policies: IPolicy<U, R>[],
+    policies: IPolicyConfig<U, R>[],
     resourceType: string | number,
     action: AuthorizationActions,
-): IPolicy<U, R>[] {
+): IPolicyConfig<U, R>[] {
     return policies.filter(policyMatchFilter(resourceType, action));
 }
