@@ -5,6 +5,7 @@ export interface IPIPConfig<U, R> {
     name: string;
 
     // returns any object which will be stored in the context
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolve(R: IAuthorizationRequest<U, R>): Promise<any>;
 
     // pips needed before this pip to resolve data (circular pips not allowed)

@@ -2,7 +2,9 @@ import { IPIPConfig } from "./IPIPConfig";
 import logger from "../../logger";
 
 export interface IPIPContext<U, R> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setPip<T = any>(pip: IPIPConfig<U, R>, data: T): void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getPip<T = any>(pip: IPIPConfig<U, R>): T;
     hasPip(pip: IPIPConfig<U, R>): boolean;
 }
@@ -10,14 +12,17 @@ export interface IPIPContext<U, R> {
 export default class PIPContext<U, R> implements IPIPContext<U, R> {
     private readonly _user: U;
     private readonly _resource: R;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private readonly _data: Map<string, any>;
 
     constructor(user: U, resource: R) {
         this._user = user;
         this._resource = resource;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this._data = new Map<string, any>();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setPip<T = any>(pip: IPIPConfig<U, R>, data: T): void {
         const key = this.getKey(pip);
         if (this._data.has(key)) {
@@ -29,6 +34,7 @@ export default class PIPContext<U, R> implements IPIPContext<U, R> {
         this._data.set(key, data);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getPip<T = any>(pip: IPIPConfig<U, R>): T {
         const key = this.getKey(pip);
         if (!this._data.has(key)) {
