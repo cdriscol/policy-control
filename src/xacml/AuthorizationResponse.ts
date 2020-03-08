@@ -6,14 +6,6 @@ export enum PermissionResponse {
 
 export interface IAuthorizationResponse {
     response: PermissionResponse;
+    // TODO: this is not used currently
     errors: string[];
-}
-
-export default class AuthorizationResponse implements IAuthorizationResponse {
-    public readonly response: PermissionResponse;
-    public readonly errors: string[];
-    constructor(response: PermissionResponse, errors?: string[]) {
-        this.response = response;
-        this.errors = errors ? errors : [];
-    }
 }

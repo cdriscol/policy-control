@@ -14,13 +14,21 @@ import { denyOverGrant } from "./deciders";
 import logger from "./logger";
 
 export type IResourceType = string | number;
+
 export interface IPolicyControlOptions<U, R> {
+    // policies that will be matched and evaluated
     policies: IPolicyConfig<U, R>[];
+    // user making request
     user: U;
+    // resource the user is acting on
     resource: R;
+    // resource type the user is acting on
     resourceType: IResourceType;
+    // the action the user is taking
     action: AuthorizationActions;
+    // the decider function that will evaluate policies and make a final decision
     decider: IDecider;
+    // pips to load data before policies are run
     pips: IPIPConfig<U, R>[];
 }
 

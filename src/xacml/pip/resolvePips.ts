@@ -2,6 +2,7 @@ import { IPIPConfig } from "./IPIPConfig";
 import { IAuthorizationRequest } from "../IAuthorizationRequest";
 import logger from "../../logger";
 
+// will resolve (recursively) IPIPConfigs
 export default async function resolvePips<U, R>(
     configs: IPIPConfig<U, R>[] = [],
     request: IAuthorizationRequest<U, R>,

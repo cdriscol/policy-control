@@ -4,6 +4,7 @@ import { PermissionResponse } from "../AuthorizationResponse";
 import { IPolicyConfig } from "./IPolicyConfig";
 import logger from "../../logger";
 
+// evaluate policy rules and return a permission response (Allow, Deny, Indeterminate)
 export default async function evaluatePolicy<U, R>(
     policy: IPolicyConfig<U, R>,
     request: IAuthorizationRequest<U, R>,

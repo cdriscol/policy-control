@@ -3,6 +3,7 @@ import { IAuthorizationRequest } from "../IAuthorizationRequest";
 import { IRuleConfig } from "./IRuleConfig";
 import logger from "../../logger";
 
+// resolve rule pips and return evaluation of rule
 export default async function evaluateRule<U, R>(
     config: IRuleConfig<U, R>,
     request: IAuthorizationRequest<U, R>,

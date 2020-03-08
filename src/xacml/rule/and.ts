@@ -3,6 +3,7 @@ import { IRuleConfig } from "./IRuleConfig";
 import evaluateRule from "./evaluateRule";
 import logger from "../../logger";
 
+// combine rules with AND logic (early returns on FALSE)
 export default function and<U, R>(rules: IRuleConfig<U, R>[]): IRuleConfig<U, R> {
     return {
         name: "and",

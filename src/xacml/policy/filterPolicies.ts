@@ -13,6 +13,7 @@ function policyMatchFilter<U, R>(resourceType: number | string, actionType: Auth
     };
 }
 
+// filter policies provided by action and resourceType
 export default function filterPolicies<U, R>(
     policies: IPolicyConfig<U, R>[],
     resourceType: string | number,

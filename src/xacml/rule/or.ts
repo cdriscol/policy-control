@@ -3,6 +3,7 @@ import evaluateRule from "./evaluateRule";
 import { IAuthorizationRequest } from "../IAuthorizationRequest";
 import logger from "../../logger";
 
+// combine rules with OR logic (early returns on TRUE)
 export default function or<U, R>(rules: IRuleConfig<U, R>[]): IRuleConfig<U, R> {
     return {
         name: "or",
