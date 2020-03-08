@@ -1,4 +1,7 @@
 // eslint-disable-next-line filenames/match-exported
-export class AccessControl {}
+export { IPolicyConfig, IRuleConfig, IPIPConfig } from "./xacml";
+import PolicyControl from "./PolicyControl";
+import createPolicyControl from "./createPolicyControl";
 
-export default AccessControl;
+export { PolicyControl };
+export default createPolicyControl;

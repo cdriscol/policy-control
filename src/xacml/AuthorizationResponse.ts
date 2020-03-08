@@ -9,7 +9,7 @@ export interface IAuthorizationResponse {
     errors: string[];
 }
 
-export class AuthorizationResponse implements IAuthorizationResponse {
+export default class AuthorizationResponse implements IAuthorizationResponse {
     public readonly response: PermissionResponse;
     public readonly errors: string[];
     constructor(response: PermissionResponse, errors?: string[]) {
