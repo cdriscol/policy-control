@@ -9,7 +9,7 @@ import {
     MissingAuthorizeDataError,
     IPIPConfig,
     resolvePips,
-} from "./xacml";
+} from "./core";
 import { denyOverGrant } from "./deciders";
 import logger from "./logger";
 

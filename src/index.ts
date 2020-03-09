@@ -1,5 +1,5 @@
 // eslint-disable-next-line filenames/match-exported
-export { IPolicyConfig, IRuleConfig, IPIPConfig, IAuthorizationRequest } from "./xacml";
+export { IPolicyConfig, IRuleConfig, IPIPConfig, IAuthorizationRequest } from "./core";
 import PolicyControl from "./PolicyControl";
 import createPolicyControl from "./createPolicyControl";
 import logger, { ILogLevel } from "./logger";

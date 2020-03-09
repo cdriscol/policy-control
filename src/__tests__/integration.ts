@@ -7,7 +7,7 @@ import * as chai from "chai";
 // test sources
 import pc, { IPIPConfig, IAuthorizationRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
 import { and, or } from "../rules";
-import { PermissionResponse } from "../xacml/AuthorizationResponse";
+import { PermissionResponse } from "../core/AuthorizationResponse";
 
 // debug tests
 setLogLevel("info");

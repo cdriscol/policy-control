@@ -5,7 +5,7 @@ import {
     IAuthorizationResponse,
     PermissionResponse,
     evaluatePolicy,
-} from "../xacml";
+} from "../core";
 import logger from "../logger";
 
 const denyOverGrant: IDecider = async <U, R>(
