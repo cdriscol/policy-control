@@ -4,3 +4,5 @@ lib
 yarn-error.log
 .jshintrc
 .jshintignore
+coverage
+.nyc_output

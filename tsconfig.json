@@ -12,7 +12,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "lib": ["ES2017"],
-        "sourceMap": false,
+        "sourceMap": true,
         "pretty": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
