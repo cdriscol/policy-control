@@ -2,11 +2,12 @@ import { AuthorizationActions } from "../AuthorizationActions";
 import { IPolicyConfig } from "./IPolicyConfig";
 import logger from "../../logger";
 
+const WILDCARD = "*";
 function policyMatchFilter<U, R>(resourceType: number | string, actionType: AuthorizationActions) {
     return (policy: IPolicyConfig<U, R>): boolean => {
         logger.debug(`filterPolicies.policyMatchFilter policy:${JSON.stringify(policy)}`);
         const matchesAction = policy.actionTypes.some(at => at === actionType);
-        const matchesResourceType = policy.resourceTypes.some(rt => rt === resourceType);
+        const matchesResourceType = policy.resourceTypes.some(rt => rt === resourceType || rt === WILDCARD);
         const isMatch = matchesAction && matchesResourceType;
         logger.debug(`filterPolicies.policyMatchFilter result:${isMatch}`);
         return isMatch;
