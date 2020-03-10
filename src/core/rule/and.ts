@@ -7,7 +7,7 @@ import logger from "../../logger";
 export default function and<U, R>(rules: IRuleConfig<U, R>[]): IRuleConfig<U, R> {
     return {
         name: "and",
-        pips: [],
+        loaders: [],
         evaluate: async (request: IAuthorizationRequest<U, R>): Promise<boolean | undefined | null> => {
             logger.debug(`and ${JSON.stringify(rules)}`);
             const result = await rules.reduce(async (response, curRule) => {

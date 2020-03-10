@@ -7,7 +7,7 @@ import logger from "../../logger";
 export default function or<U, R>(rules: IRuleConfig<U, R>[]): IRuleConfig<U, R> {
     return {
         name: "or",
-        pips: [],
+        loaders: [],
         evaluate: async (request: IAuthorizationRequest<U, R>): Promise<boolean | undefined | null> => {
             logger.debug(`or ${JSON.stringify(rules)}`);
             const result = await rules.reduce(async (response, curRule) => {

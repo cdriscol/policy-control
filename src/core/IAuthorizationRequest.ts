@@ -1,5 +1,5 @@
 import { AuthorizationActions } from "./AuthorizationActions";
-import { IPIPContext } from "./pip";
+import { ILoaderContext } from "./loader";
 
 // represents the current authorization request (i.e. when someone calls authorize)
 export interface IAuthorizationRequest<U, R> {
@@ -11,6 +11,6 @@ export interface IAuthorizationRequest<U, R> {
     resourceType: number | string;
     // action the user is taking
     action: AuthorizationActions;
-    // data from all the PIPs stored in this context
-    context: IPIPContext<U, R>;
+    // data from all the Loaders stored in this context
+    context: ILoaderContext;
 }

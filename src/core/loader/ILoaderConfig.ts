@@ -1,6 +1,6 @@
 import { IAuthorizationRequest } from "../IAuthorizationRequest";
 
-export interface IPIPConfig<U, R> {
+export interface ILoaderConfig<U, R> {
     // unique name used to store data from resolve
     name: string;
 
@@ -8,9 +8,12 @@ export interface IPIPConfig<U, R> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolve(R: IAuthorizationRequest<U, R>): Promise<any>;
 
-    // pips needed before this pip to resolve data (circular pips not allowed)
-    pips?: IPIPConfig<U, R>[];
+    // loaders needed before this loader to resolve data (circular loaders not allowed)
+    loaders?: ILoaderConfig<U, R>[];
 
     // key used to store/retrieve this data, defaults to "name"
     key?(name: string, user: U, resource: R): string;
+
+    // this data should be persisted between "authorize" calls
+    persist?: boolean;
 }

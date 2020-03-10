@@ -1,11 +1,11 @@
 import * as chai from "chai";
 
 // test build output
-// import pc, { IPIPConfig, IRuleConfig, IPolicyConfig } from "../../lib";
+// import pc, { ILoaderConfig, IRuleConfig, IPolicyConfig } from "../../lib";
 // import { and, or } from "../../lib/rules";
 
 // test sources
-import pc, { IPIPConfig, IAuthorizationRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
+import pc, { ILoaderConfig, IAuthorizationRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
 import { and, or } from "../rules";
 import { PermissionResponse } from "../core/AuthorizationResponse";
 
@@ -22,43 +22,43 @@ type Resource = {
     createdById: string;
 };
 
-// this is a IPIPConfing builder because it can create a config with a resolve scoped to a local variable
+// this is a ILoaderConfing builder because it can create a config with a resolve scoped to a local variable
 // intended to load first before any policies evaluate (to add things like req.locals, etc)
-const createPcPip1: (locals?: any) => IPIPConfig<User, any> = (locals: any) => ({
+const createPcLoader1: (locals?: any) => ILoaderConfig<User, any> = (locals: any) => ({
     name: "resLocals",
     resolve: () => locals,
 });
 
-// intended to be a pip that is needed to resolve before pip1
-const prePip1: IPIPConfig<User, Resource> = {
-    name: "prePip1",
-    pips: [createPcPip1()],
+// intended to be a loader that is needed to resolve before loader1
+const preLoader1: ILoaderConfig<User, Resource> = {
+    name: "preLoader1",
+    loaders: [createPcLoader1()],
     resolve: async (): Promise<{ preData: string }> => {
         return { preData: "test" };
     },
 };
 
 // intended to load as part of trueRule
-const pip1: IPIPConfig<User, Resource> = {
-    pips: [prePip1],
-    name: "pip1",
+const loader1: ILoaderConfig<User, Resource> = {
+    loaders: [preLoader1],
+    name: "loader1",
     key: (name, user, resource) => `${name}:${user.id}:${resource.id}`,
     resolve: async (req: IAuthorizationRequest<User, Resource>): Promise<{ data: string }> => {
-        // assert on some pip data that we expected to laod before us
-        const prePipData = req.context.getPip(prePip1);
-        chai.expect(prePipData).to.contain({ preData: "test" });
-        const pcPip1 = req.context.getPip(createPcPip1());
-        chai.expect(pcPip1).to.contain({ createPcPip1: 1 });
+        // assert on some loader data that we expected to laod before us
+        const preLoaderData = req.context.get(preLoader1.name);
+        chai.expect(preLoaderData).to.contain({ preData: "test" });
+        const pcLoader1 = req.context.get(createPcLoader1().name);
+        chai.expect(pcLoader1).to.contain({ createPcLoader1: 1 });
         return { data: "test" };
     },
 };
 
-// a rule that will return TRUE if pips load data correctly
+// a rule that will return TRUE if loaders load data correctly
 const trueRule: IRuleConfig<User, Resource> = {
     name: "trueRule",
-    pips: [pip1],
+    loaders: [loader1],
     evaluate: async (req: IAuthorizationRequest<User, Resource>) => {
-        const result = req.context.getPip<{ data: string }>(pip1).data === "test";
+        const result = req.context.get<{ data: string }>(`loader1:${req.user.id}:${req.resource.id}`).data === "test";
         chai.expect(result).to.be.true;
         return result;
     },
@@ -94,9 +94,9 @@ const pep = pc<User, Resource>()
 describe("integration tests", () => {
     it("works", async () => {
         // resLocals is just an example of a scoped variable you may want to include as part of your authorization context
-        const resLocals = { createPcPip1: 1 };
+        const resLocals = { createPcLoader1: 1 };
 
-        // calling authorize on the PEP with user, resource, and a PIP with res locals
+        // calling authorize on the PEP with user, resource, and a Loader with res locals
         const result = await pep.authorize({
             user: {
                 id: "userId",
@@ -106,7 +106,7 @@ describe("integration tests", () => {
                 id: "resourceId",
                 createdById: "userId",
             },
-            pips: [createPcPip1(resLocals)],
+            loaders: [createPcLoader1(resLocals)],
         });
         chai.expect(result.response).to.equal(PermissionResponse.Deny);
     });
