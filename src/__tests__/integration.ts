@@ -8,6 +8,7 @@ import * as chai from "chai";
 import pc, { ILoaderConfig, IDecisionRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
 import { and, or } from "../rules";
 import { PermissionResponse } from "../core/DecisionResponse";
+import { IDecisionContext } from "../core/IDecisionRequest";
 
 // debug tests
 setLogLevel("info");
@@ -22,17 +23,16 @@ type Resource = {
     createdById: string;
 };
 
-// this is a ILoaderConfing builder because it can create a config with a resolve scoped to a local variable
+// this is a custom context so we can set some context before calling authorize
 // intended to load first before any policies evaluate (to add things like req.locals, etc)
-const createPcLoader1: (locals?: any) => ILoaderConfig<User, any> = (locals: any) => ({
-    name: "resLocals",
-    resolve: () => locals,
-});
+interface ICustomContext extends IDecisionContext {
+    locals: object;
+}
 
 // intended to be a loader that is needed to resolve before loader1
 const preLoader1: ILoaderConfig<User, Resource> = {
     name: "preLoader1",
-    loaders: [createPcLoader1()],
+    loaders: [],
     resolve: async (): Promise<{ preData: string }> => {
         return { preData: "test" };
     },
@@ -43,12 +43,12 @@ const loader1: ILoaderConfig<User, Resource> = {
     loaders: [preLoader1],
     name: "loader1",
     key: (name, user, resource) => `${name}:${user.id}:${resource.id}`,
-    resolve: async (req: IDecisionRequest<User, Resource>): Promise<{ data: string }> => {
+    resolve: async (req: IDecisionRequest<User, Resource, ICustomContext>): Promise<{ data: string }> => {
         // assert on some loader data that we expected to laod before us
         const preLoaderData = req.context.store.get(preLoader1.name);
         chai.expect(preLoaderData).to.contain({ preData: "test" });
-        const pcLoader1 = req.context.store.get(createPcLoader1().name);
-        chai.expect(pcLoader1).to.contain({ createPcLoader1: 1 });
+        const { locals } = req.context;
+        chai.expect(locals).to.contain({ locals: 1 });
         return { data: "test" };
     },
 };
@@ -87,7 +87,7 @@ const policy1: IPolicyConfig<User, Resource> = {
 };
 
 // an example pep with 1 policy
-const pep = pc<User, Resource>()
+const pep = pc<User, Resource, ICustomContext>()
     .action("create")
     .resourceType("test")
     .policies([policy1]);
@@ -95,20 +95,23 @@ const pep = pc<User, Resource>()
 describe("integration tests", () => {
     it("works", async () => {
         // resLocals is just an example of a scoped variable you may want to include as part of your decision context
-        const resLocals = { createPcLoader1: 1 };
+        const resLocals = { locals: 1 };
 
         // calling decide on the PEP with user, resource, and a Loader with res locals
-        const result = await pep.decide({
-            user: {
-                id: "userId",
-                email: "test@test.com",
-            },
-            resource: {
-                id: "resourceId",
-                createdById: "userId",
-            },
-            loaders: [createPcLoader1(resLocals)],
-        });
+        const result = await pep
+            .context({
+                locals: resLocals,
+            })
+            .decide({
+                user: {
+                    id: "userId",
+                    email: "test@test.com",
+                },
+                resource: {
+                    id: "resourceId",
+                    createdById: "userId",
+                },
+            });
         chai.expect(result.response).to.equal(PermissionResponse.Deny);
     });
 });

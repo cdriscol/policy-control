@@ -85,7 +85,7 @@ export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionC
         return this;
     }
 
-    public context(context: C) {
+    public context(context: Partial<C>) {
         this._context = context;
         return this;
     }
@@ -120,7 +120,7 @@ export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionC
         return this;
     }
 
-    public async decide(options: Partial<IPolicyControlOptions<U, R>> = {}): Promise<IDecisionResponse> {
+    public async decide(options: Partial<IPolicyControlOptions<U, R, C>> = {}): Promise<IDecisionResponse> {
         logger.debug(`PolicyControl.decide ${JSON.stringify(options)}`);
         this.validate(options);
 
