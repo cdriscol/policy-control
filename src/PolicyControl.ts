@@ -5,18 +5,19 @@ import {
     Actions,
     IDecisionRequest,
     IDecisionResponse,
-    LoaderContext,
+    LoaderStore,
     MissingDecisionDataError,
     ILoaderConfig,
     resolveLoaders,
+    IDecisionContext,
 } from "./core";
 import { denyOverGrant } from "./deciders";
 import logger from "./logger";
-import { ILoaderContext } from "./core/loader";
+import { ILoaderStore } from "./core/loader";
 
 export type IResourceType = string | number;
 
-export interface IPolicyControlOptions<U, R> {
+export interface IPolicyControlOptions<U, R, C extends IDecisionContext = IDecisionContext> {
     // policies that will be matched and evaluated
     policies: IPolicyConfig<U, R>[];
     // user making request
@@ -31,9 +32,11 @@ export interface IPolicyControlOptions<U, R> {
     decider: IDecider;
     // loaders to load data before policies are run
     loaders: ILoaderConfig<U, R>[];
+    // context
+    context: Partial<C>;
 }
 
-export interface IPolicyControl<U, R> {
+export interface IPolicyControl<U, R, C extends IDecisionContext = IDecisionContext> {
     user(user: U): this;
     resource(resource: R): this;
     policies(policies: IPolicyConfig<U, R>[]): this;
@@ -42,11 +45,12 @@ export interface IPolicyControl<U, R> {
     resourceType(resourceType: IResourceType): this;
     loaders(loaders: ILoaderConfig<U, R>[]): this;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    context(data: { [key: string]: any }): this;
+    context(context: C): this;
     decide(): Promise<IDecisionResponse>;
 }
 
-export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
+export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionContext>
+    implements IPolicyControl<U, R, C> {
     private _policies: IPolicyConfig<U, R>[];
     private _user: U | undefined;
     private _resource: R | undefined;
@@ -54,7 +58,8 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
     private _action: Actions | undefined;
     private _decider: IDecider;
     private _loaders: ILoaderConfig<U, R>[];
-    private _context: ILoaderContext;
+    private _store: ILoaderStore;
+    private _context: Partial<C>;
 
     constructor(options: Partial<IPolicyControlOptions<U, R>> = {}) {
         this._policies = options.policies || [];
@@ -64,7 +69,8 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         this._action = options.action;
         this._decider = options.decider || denyOverGrant;
         this._loaders = options.loaders || [];
-        this._context = new LoaderContext();
+        this._store = new LoaderStore();
+        this._context = {};
     }
 
     public policies(policies: IPolicyConfig<U, R>[]) {
@@ -79,11 +85,8 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         return this;
     }
 
-    public context(data: { [key: string]: any }) {
-        Object.keys(data).forEach(key => {
-            const keyData = data[key];
-            this._context.prime(key, keyData, true);
-        });
+    public context(context: C) {
+        this._context = context;
         return this;
     }
 
@@ -128,6 +131,10 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         const action = options.action || this._action;
         const decider = options.decider || this._decider;
         const loaders = [...(options.loaders || []), ...(this._loaders || [])];
+        const context: C = {
+            ...(options.context || this._context),
+            store: this._store,
+        } as any;
 
         // this ugly check is required for TS to be happy
         if (!user || !resource || !action || !resourceType) {
@@ -139,7 +146,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
             resource,
             resourceType,
             action,
-            context: this._context,
+            context,
         };
 
         await resolveLoaders(loaders, request);

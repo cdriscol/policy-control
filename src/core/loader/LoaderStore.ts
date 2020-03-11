@@ -1,6 +1,6 @@
 import logger from "../../logger";
 
-export interface ILoaderContext {
+export interface ILoaderStore {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     prime<T = any>(key: string, data: T, persist?: boolean): void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,7 +11,7 @@ export interface ILoaderContext {
     has(key: string): boolean;
 }
 
-export default class LoaderContext implements ILoaderContext {
+export default class LoaderStore implements ILoaderStore {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private readonly _data: Map<string, any> = new Map<string, any>();
     private readonly _persistedKeys: Set<string> = new Set<string>();
@@ -23,7 +23,7 @@ export default class LoaderContext implements ILoaderContext {
                 `Calling prime twice for the same key "${key}" in the same decision context is usually a bad thing.`,
             );
         }
-        logger.debug(`LoaderContext.setLoader key:${key} data:${JSON.stringify(data)}`);
+        logger.debug(`LoaderStore.setLoader key:${key} data:${JSON.stringify(data)}`);
         this._data.set(key, data);
         if (persist) {
             this.persist(key);
@@ -38,13 +38,13 @@ export default class LoaderContext implements ILoaderContext {
             );
         }
         const data = this._data.get(key);
-        logger.debug(`LoaderContext.getLoader key:${key} data:${JSON.stringify(data)}`);
+        logger.debug(`LoaderStore.getLoader key:${key} data:${JSON.stringify(data)}`);
         return data;
     }
 
     has(key: string): boolean {
         const result = this._data.has(key);
-        logger.debug(`LoaderContext.hasLoader key:${key} result:${result}`);
+        logger.debug(`LoaderStore.hasLoader key:${key} result:${result}`);
         return result;
     }
 

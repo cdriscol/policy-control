@@ -13,7 +13,7 @@ export default async function resolveLoaders<U, R>(
     await configs.reduce(async (prev, loaderConfig) => {
         const loaderKey = getLoaderKey(loaderConfig, request);
         await prev;
-        if (request.context.has(loaderKey)) {
+        if (request.context.store.has(loaderKey)) {
             logger.debug(`resolveLoaders loader already exists ${loaderConfig.name}`);
             return;
         }
@@ -25,6 +25,6 @@ export default async function resolveLoaders<U, R>(
             logger.debug(`resolveLoaders done resolving dep loaders for ${loaderConfig.name}`);
         }
         const data = await loaderConfig.resolve(request);
-        request.context.prime(loaderKey, data, loaderConfig.persist);
+        request.context.store.prime(loaderKey, data, loaderConfig.persist);
     }, Promise.resolve());
 }

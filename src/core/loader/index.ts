@@ -1,6 +1,6 @@
 import { ILoaderConfig } from "./ILoaderConfig";
 import resolveLoaders from "./resolveLoaders";
-import LoaderContext, { ILoaderContext } from "./LoaderContext";
+import LoaderStore, { ILoaderStore } from "./LoaderStore";
 import getLoaderKey from "./getLoaderKey";
 
-export { ILoaderConfig, resolveLoaders, LoaderContext, ILoaderContext, getLoaderKey };
+export { ILoaderConfig, resolveLoaders, LoaderStore, ILoaderStore, getLoaderKey };

@@ -43,4 +43,4 @@ pc<User, Resource>()
     .user({ id: "userId" })
     .resource({ id: "resourceId" })
     .policies([policy1])
-    .authorize();
+    .decide();

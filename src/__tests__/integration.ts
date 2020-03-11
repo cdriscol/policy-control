@@ -45,9 +45,9 @@ const loader1: ILoaderConfig<User, Resource> = {
     key: (name, user, resource) => `${name}:${user.id}:${resource.id}`,
     resolve: async (req: IDecisionRequest<User, Resource>): Promise<{ data: string }> => {
         // assert on some loader data that we expected to laod before us
-        const preLoaderData = req.context.get(preLoader1.name);
+        const preLoaderData = req.context.store.get(preLoader1.name);
         chai.expect(preLoaderData).to.contain({ preData: "test" });
-        const pcLoader1 = req.context.get(createPcLoader1().name);
+        const pcLoader1 = req.context.store.get(createPcLoader1().name);
         chai.expect(pcLoader1).to.contain({ createPcLoader1: 1 });
         return { data: "test" };
     },
@@ -58,7 +58,8 @@ const trueRule: IRuleConfig<User, Resource> = {
     name: "trueRule",
     loaders: [loader1],
     evaluate: async (req: IDecisionRequest<User, Resource>) => {
-        const result = req.context.get<{ data: string }>(`loader1:${req.user.id}:${req.resource.id}`).data === "test";
+        const result =
+            req.context.store.get<{ data: string }>(`loader1:${req.user.id}:${req.resource.id}`).data === "test";
         chai.expect(result).to.be.true;
         return result;
     },

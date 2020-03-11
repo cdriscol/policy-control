@@ -1,8 +1,12 @@
 import { Actions } from "./Actions";
-import { ILoaderContext } from "./loader";
+import { ILoaderStore } from "./loader";
+
+export interface IDecisionContext {
+    store: ILoaderStore;
+}
 
 // represents the current decision request (i.e. when someone calls decide)
-export interface IDecisionRequest<U, R> {
+export interface IDecisionRequest<U, R, C extends IDecisionContext = IDecisionContext> {
     // user who is making request
     user: U;
     // resource the user is trying to act on
@@ -12,5 +16,5 @@ export interface IDecisionRequest<U, R> {
     // action the user is taking
     action: Actions;
     // data from all the Loaders stored in this context
-    context: ILoaderContext;
+    context: C;
 }
