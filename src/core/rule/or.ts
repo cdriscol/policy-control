@@ -1,6 +1,6 @@
 import { IRuleConfig } from "./IRuleConfig";
 import evaluateRule from "./evaluateRule";
-import { IAuthorizationRequest } from "../IAuthorizationRequest";
+import { IDecisionRequest } from "../IDecisionRequest";
 import logger from "../../logger";
 
 // combine rules with OR logic (early returns on TRUE)
@@ -8,7 +8,7 @@ export default function or<U, R>(rules: IRuleConfig<U, R>[]): IRuleConfig<U, R> 
     return {
         name: "or",
         loaders: [],
-        evaluate: async (request: IAuthorizationRequest<U, R>): Promise<boolean | undefined | null> => {
+        evaluate: async (request: IDecisionRequest<U, R>): Promise<boolean | undefined | null> => {
             logger.debug(`or ${JSON.stringify(rules)}`);
             const result = await rules.reduce(async (response, curRule) => {
                 const prevResponse = await response;

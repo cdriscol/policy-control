@@ -1,9 +1,9 @@
 import { IPolicyConfig } from "./policy";
-import { IAuthorizationRequest } from "./IAuthorizationRequest";
-import { IAuthorizationResponse } from "./AuthorizationResponse";
+import { IDecisionRequest } from "./IDecisionRequest";
+import { IDecisionResponse } from "./DecisionResponse";
 
-// evaluate policies and come up with a authorization response
+// evaluate policies and come up with a decision response
 export type IDecider = <U, R>(
     policies: IPolicyConfig<U, R>[],
-    request: IAuthorizationRequest<U, R>,
-) => Promise<IAuthorizationResponse>;
+    request: IDecisionRequest<U, R>,
+) => Promise<IDecisionResponse>;

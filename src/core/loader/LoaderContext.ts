@@ -20,7 +20,7 @@ export default class LoaderContext implements ILoaderContext {
     prime<T = any>(key: string, data: T, persist?: boolean): void {
         if (this._data.has(key)) {
             throw new Error(
-                `Calling prime twice for the same key "${key}" in the same authorization context is usually a bad thing.`,
+                `Calling prime twice for the same key "${key}" in the same decision context is usually a bad thing.`,
             );
         }
         logger.debug(`LoaderContext.setLoader key:${key} data:${JSON.stringify(data)}`);

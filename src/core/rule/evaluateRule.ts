@@ -1,12 +1,12 @@
 import { resolveLoaders } from "../loader";
-import { IAuthorizationRequest } from "../IAuthorizationRequest";
+import { IDecisionRequest } from "../IDecisionRequest";
 import { IRuleConfig } from "./IRuleConfig";
 import logger from "../../logger";
 
 // resolve rule loaders and return evaluation of rule
 export default async function evaluateRule<U, R>(
     config: IRuleConfig<U, R>,
-    request: IAuthorizationRequest<U, R>,
+    request: IDecisionRequest<U, R>,
 ): Promise<boolean | undefined | null> {
     logger.debug(`evaluateRule rule:${JSON.stringify(config)}`);
     await resolveLoaders(config.loaders, request);

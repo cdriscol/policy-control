@@ -1,9 +1,9 @@
-import { AuthorizationActions } from "../AuthorizationActions";
+import { Actions } from "../Actions";
 import { IPolicyConfig } from "./IPolicyConfig";
 import logger from "../../logger";
 
 const WILDCARD = "*";
-function policyMatchFilter<U, R>(resourceType: number | string, actionType: AuthorizationActions) {
+function policyMatchFilter<U, R>(resourceType: number | string, actionType: Actions) {
     return (policy: IPolicyConfig<U, R>): boolean => {
         logger.debug(`filterPolicies.policyMatchFilter policy:${JSON.stringify(policy)}`);
         const matchesAction = policy.actionTypes.some(at => at === actionType);
@@ -18,7 +18,7 @@ function policyMatchFilter<U, R>(resourceType: number | string, actionType: Auth
 export default function filterPolicies<U, R>(
     policies: IPolicyConfig<U, R>[],
     resourceType: string | number,
-    action: AuthorizationActions,
+    action: Actions,
 ): IPolicyConfig<U, R>[] {
     logger.debug(`filterPolicies action:${action} resourceType:${resourceType}`);
     logger.debug(`filteredPolicies incoming policies:${JSON.stringify(policies.map(p => p.name))}`);

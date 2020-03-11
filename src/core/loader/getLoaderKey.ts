@@ -1,9 +1,9 @@
 import { ILoaderConfig } from "./ILoaderConfig";
-import { IAuthorizationRequest } from "../IAuthorizationRequest";
+import { IDecisionRequest } from "../IDecisionRequest";
 
 export default function getLoaderKey<U, R>(
     loader: ILoaderConfig<U, R>,
-    requestOrUser: IAuthorizationRequest<U, R> | U,
+    requestOrUser: IDecisionRequest<U, R> | U,
     maybeResource?: R,
 ): string {
     const { name, key } = loader;

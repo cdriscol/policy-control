@@ -5,9 +5,9 @@ import * as chai from "chai";
 // import { and, or } from "../../lib/rules";
 
 // test sources
-import pc, { ILoaderConfig, IAuthorizationRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
+import pc, { ILoaderConfig, IDecisionRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
 import { and, or } from "../rules";
-import { PermissionResponse } from "../core/AuthorizationResponse";
+import { PermissionResponse } from "../core/DecisionResponse";
 
 // debug tests
 setLogLevel("info");
@@ -43,7 +43,7 @@ const loader1: ILoaderConfig<User, Resource> = {
     loaders: [preLoader1],
     name: "loader1",
     key: (name, user, resource) => `${name}:${user.id}:${resource.id}`,
-    resolve: async (req: IAuthorizationRequest<User, Resource>): Promise<{ data: string }> => {
+    resolve: async (req: IDecisionRequest<User, Resource>): Promise<{ data: string }> => {
         // assert on some loader data that we expected to laod before us
         const preLoaderData = req.context.get(preLoader1.name);
         chai.expect(preLoaderData).to.contain({ preData: "test" });
@@ -57,7 +57,7 @@ const loader1: ILoaderConfig<User, Resource> = {
 const trueRule: IRuleConfig<User, Resource> = {
     name: "trueRule",
     loaders: [loader1],
-    evaluate: async (req: IAuthorizationRequest<User, Resource>) => {
+    evaluate: async (req: IDecisionRequest<User, Resource>) => {
         const result = req.context.get<{ data: string }>(`loader1:${req.user.id}:${req.resource.id}`).data === "test";
         chai.expect(result).to.be.true;
         return result;
@@ -93,11 +93,11 @@ const pep = pc<User, Resource>()
 
 describe("integration tests", () => {
     it("works", async () => {
-        // resLocals is just an example of a scoped variable you may want to include as part of your authorization context
+        // resLocals is just an example of a scoped variable you may want to include as part of your decision context
         const resLocals = { createPcLoader1: 1 };
 
-        // calling authorize on the PEP with user, resource, and a Loader with res locals
-        const result = await pep.authorize({
+        // calling decide on the PEP with user, resource, and a Loader with res locals
+        const result = await pep.decide({
             user: {
                 id: "userId",
                 email: "test@test.com",

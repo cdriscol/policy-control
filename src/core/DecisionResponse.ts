@@ -4,7 +4,7 @@ export enum PermissionResponse {
     Deny = "deny",
 }
 
-export interface IAuthorizationResponse {
+export interface IDecisionResponse {
     response: PermissionResponse;
     // TODO: this is not used currently
     errors: string[];

@@ -2,11 +2,11 @@ import {
     filterPolicies,
     IPolicyConfig,
     IDecider,
-    AuthorizationActions,
-    IAuthorizationRequest,
-    IAuthorizationResponse,
+    Actions,
+    IDecisionRequest,
+    IDecisionResponse,
     LoaderContext,
-    MissingAuthorizeDataError,
+    MissingDecisionDataError,
     ILoaderConfig,
     resolveLoaders,
 } from "./core";
@@ -26,7 +26,7 @@ export interface IPolicyControlOptions<U, R> {
     // resource type the user is acting on
     resourceType: IResourceType;
     // the action the user is taking
-    action: AuthorizationActions;
+    action: Actions;
     // the decider function that will evaluate policies and make a final decision
     decider: IDecider;
     // loaders to load data before policies are run
@@ -38,12 +38,12 @@ export interface IPolicyControl<U, R> {
     resource(resource: R): this;
     policies(policies: IPolicyConfig<U, R>[]): this;
     decider(decider: IDecider): this;
-    action(action: AuthorizationActions): this;
+    action(action: Actions): this;
     resourceType(resourceType: IResourceType): this;
     loaders(loaders: ILoaderConfig<U, R>[]): this;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context(data: { [key: string]: any }): this;
-    authorize(): Promise<IAuthorizationResponse>;
+    decide(): Promise<IDecisionResponse>;
 }
 
 export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
@@ -51,7 +51,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
     private _user: U | undefined;
     private _resource: R | undefined;
     private _resourceType: IResourceType | undefined;
-    private _action: AuthorizationActions | undefined;
+    private _action: Actions | undefined;
     private _decider: IDecider;
     private _loaders: ILoaderConfig<U, R>[];
     private _context: ILoaderContext;
@@ -93,7 +93,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         return this;
     }
 
-    public action(action: AuthorizationActions) {
+    public action(action: Actions) {
         logger.debug(`PolicyControl.action ${JSON.stringify(action)}`);
         this._action = action;
         return this;
@@ -117,8 +117,8 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
         return this;
     }
 
-    public async authorize(options: Partial<IPolicyControlOptions<U, R>> = {}): Promise<IAuthorizationResponse> {
-        logger.debug(`PolicyControl.authorize ${JSON.stringify(options)}`);
+    public async decide(options: Partial<IPolicyControlOptions<U, R>> = {}): Promise<IDecisionResponse> {
+        logger.debug(`PolicyControl.decide ${JSON.stringify(options)}`);
         this.validate(options);
 
         const policies = options.policies || this._policies;
@@ -134,7 +134,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
             throw new Error();
         }
 
-        const request: IAuthorizationRequest<U, R> = {
+        const request: IDecisionRequest<U, R> = {
             user,
             resource,
             resourceType,
@@ -146,7 +146,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
 
         const filteredPolicies = filterPolicies(policies, resourceType, action);
         if (!filteredPolicies.length) {
-            logger.warn(`Attempting authorization without policies`);
+            logger.warn(`Attempting decision without policies`);
         }
         return decider(filteredPolicies, request);
     }
@@ -161,7 +161,7 @@ export default class PolicyControl<U, R> implements IPolicyControl<U, R> {
 
         if (missingFields.length) {
             logger.debug(`PolicyControl.validate INVALID missing fields (${missingFields.join(",")})`);
-            throw new MissingAuthorizeDataError(missingFields);
+            throw new MissingDecisionDataError(missingFields);
         }
 
         logger.debug(`PolicyControl.validate VALID`);

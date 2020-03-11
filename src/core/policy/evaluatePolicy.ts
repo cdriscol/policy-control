@@ -1,13 +1,13 @@
 import { evaluateRule, or } from "../rule";
-import { IAuthorizationRequest } from "../IAuthorizationRequest";
-import { PermissionResponse } from "../AuthorizationResponse";
+import { IDecisionRequest } from "../IDecisionRequest";
+import { PermissionResponse } from "../DecisionResponse";
 import { IPolicyConfig } from "./IPolicyConfig";
 import logger from "../../logger";
 
 // evaluate policy rules and return a permission response (Allow, Deny, Indeterminate)
 export default async function evaluatePolicy<U, R>(
     policy: IPolicyConfig<U, R>,
-    request: IAuthorizationRequest<U, R>,
+    request: IDecisionRequest<U, R>,
 ): Promise<PermissionResponse> {
     logger.debug(`evaluatePolicy policy:${JSON.stringify(policy)}`);
     const ruleResponse = await evaluateRule(or(policy.rules), request);

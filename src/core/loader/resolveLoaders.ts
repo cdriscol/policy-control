@@ -1,12 +1,12 @@
 import { ILoaderConfig } from "./ILoaderConfig";
-import { IAuthorizationRequest } from "../IAuthorizationRequest";
+import { IDecisionRequest } from "../IDecisionRequest";
 import logger from "../../logger";
 import getLoaderKey from "./getLoaderKey";
 
 // will resolve (recursively) ILoaderConfigs
 export default async function resolveLoaders<U, R>(
     configs: ILoaderConfig<U, R>[] = [],
-    request: IAuthorizationRequest<U, R>,
+    request: IDecisionRequest<U, R>,
 ): Promise<void> {
     if (!configs.length) return;
     logger.debug(`resolveLoaders loaders:${configs.map(c => c.name).join(",")}`);

@@ -1,4 +1,4 @@
-import { IAuthorizationRequest } from "../IAuthorizationRequest";
+import { IDecisionRequest } from "../IDecisionRequest";
 import { IRuleConfig } from "./IRuleConfig";
 import evaluateRule from "./evaluateRule";
 import logger from "../../logger";
@@ -8,7 +8,7 @@ export default function and<U, R>(rules: IRuleConfig<U, R>[]): IRuleConfig<U, R>
     return {
         name: "and",
         loaders: [],
-        evaluate: async (request: IAuthorizationRequest<U, R>): Promise<boolean | undefined | null> => {
+        evaluate: async (request: IDecisionRequest<U, R>): Promise<boolean | undefined | null> => {
             logger.debug(`and ${JSON.stringify(rules)}`);
             const result = await rules.reduce(async (response, curRule) => {
                 const prevResponse = await response;
