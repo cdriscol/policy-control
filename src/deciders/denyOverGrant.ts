@@ -2,7 +2,7 @@ import {
     IPolicyConfig,
     IDecisionRequest,
     IDecider,
-    IDecisionResponse,
+    IAuthorizationDecision,
     PermissionResponse,
     evaluatePolicy,
 } from "../core";
@@ -11,9 +11,9 @@ import logger from "../logger";
 const denyOverGrant: IDecider = async <U, R>(
     policies: IPolicyConfig<U, R>[],
     request: IDecisionRequest<U, R>,
-): Promise<IDecisionResponse> => {
+): Promise<IAuthorizationDecision> => {
     logger.debug(`denyOverGrantPDP policies:${JSON.stringify(policies)}, request:${JSON.stringify(request)}`);
-    const decisionResponse = await policies
+    const AuthorizationDecision = await policies
         .map(pc => ({ ...pc, priority: pc.priority || 100 }))
         .sort((a, b) => a.priority - b.priority)
         .reduce(async (curResponsePromise: Promise<PermissionResponse>, curPolicy: IPolicyConfig<U, R>) => {
@@ -29,7 +29,7 @@ const denyOverGrant: IDecider = async <U, R>(
             return result;
         }, Promise.resolve(PermissionResponse.Indeterminate));
 
-    const result = { response: decisionResponse, errors: [] };
+    const result = { response: AuthorizationDecision, errors: [] };
     logger.debug(`denyOverGrantPDP result:${JSON.stringify(result)}`);
     return result;
 };

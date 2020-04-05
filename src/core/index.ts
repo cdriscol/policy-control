@@ -5,4 +5,4 @@ export { IDecider } from "./IDecider";
 export { IDecisionRequest, IDecisionContext } from "./IDecisionRequest";
 export { Actions } from "./Actions";
 export { MissingDecisionDataError } from "./errors/MissingDecisionDataError";
-export { IDecisionResponse, PermissionResponse } from "./DecisionResponse";
+export { IAuthorizationDecision, PermissionResponse } from "./AuthorizationDecision";

@@ -4,7 +4,7 @@ import {
     IDecider,
     Actions,
     IDecisionRequest,
-    IDecisionResponse,
+    IAuthorizationDecision,
     LoaderStore,
     MissingDecisionDataError,
     ILoaderConfig,
@@ -44,9 +44,8 @@ export interface IPolicyControl<U, R, C extends IDecisionContext = IDecisionCont
     action(action: Actions): this;
     resourceType(resourceType: IResourceType): this;
     loaders(loaders: ILoaderConfig<U, R>[]): this;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context(context: C): this;
-    decide(): Promise<IDecisionResponse>;
+    authorize(): Promise<IAuthorizationDecision>;
 }
 
 export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionContext>
@@ -120,8 +119,8 @@ export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionC
         return this;
     }
 
-    public async decide(options: Partial<IPolicyControlOptions<U, R, C>> = {}): Promise<IDecisionResponse> {
-        logger.debug(`PolicyControl.decide ${JSON.stringify(options)}`);
+    public async authorize(options: Partial<IPolicyControlOptions<U, R, C>> = {}): Promise<IAuthorizationDecision> {
+        logger.debug(`PolicyControl.authorize ${JSON.stringify(options)}`);
         this.validate(options);
 
         const policies = options.policies || this._policies;

@@ -7,7 +7,7 @@ import * as chai from "chai";
 // test sources
 import pc, { ILoaderConfig, IDecisionRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
 import { and, or } from "../rules";
-import { PermissionResponse } from "../core/DecisionResponse";
+import { PermissionResponse } from "../core/AuthorizationDecision";
 import { IDecisionContext } from "../core/IDecisionRequest";
 
 // debug tests
@@ -99,19 +99,19 @@ describe("integration tests", () => {
 
         // calling decide on the PEP with user, resource, and a Loader with res locals
         const result = await pep
-            .context({
+        	.context({
                 locals: resLocals,
-            })
-            .decide({
-                user: {
-                    id: "userId",
-                    email: "test@test.com",
-                },
-                resource: {
-                    id: "resourceId",
-                    createdById: "userId",
-                },
-            });
+            }).authorize({
+            user: {
+                id: "userId",
+                email: "test@test.com",
+            },
+            resource: {
+                id: "resourceId",
+                createdById: "userId",
+            },
+            loaders: [createPcLoader1(resLocals)],
+        });
         chai.expect(result.response).to.equal(PermissionResponse.Deny);
     });
 });

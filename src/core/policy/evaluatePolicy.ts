@@ -1,6 +1,6 @@
 import { evaluateRule, or } from "../rule";
 import { IDecisionRequest } from "../IDecisionRequest";
-import { PermissionResponse } from "../DecisionResponse";
+import { PermissionResponse } from "../AuthorizationDecision";
 import { IPolicyConfig } from "./IPolicyConfig";
 import logger from "../../logger";
 
