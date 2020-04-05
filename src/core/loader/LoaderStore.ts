@@ -60,7 +60,7 @@ export default class LoaderStore implements ILoaderStore {
             return;
         }
 
-        Array.from(this._data.keys()).forEach(key => {
+        Array.from(this._data.keys()).forEach((key) => {
             if (!persisted && this._persistedKeys.has(key)) return;
             this._data.delete(key);
         });

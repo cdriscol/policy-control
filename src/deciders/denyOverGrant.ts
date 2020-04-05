@@ -14,7 +14,7 @@ const denyOverGrant: IDecider = async <U, R>(
 ): Promise<IAuthorizationDecision> => {
     logger.debug(`denyOverGrantPDP policies:${JSON.stringify(policies)}, request:${JSON.stringify(request)}`);
     const AuthorizationDecision = await policies
-        .map(pc => ({ ...pc, priority: pc.priority || 100 }))
+        .map((pc) => ({ ...pc, priority: pc.priority || 100 }))
         .sort((a, b) => a.priority - b.priority)
         .reduce(async (curResponsePromise: Promise<PermissionResponse>, curPolicy: IPolicyConfig<U, R>) => {
             const response = await curResponsePromise;
