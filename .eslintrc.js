@@ -20,7 +20,10 @@ module.exports = {
 	rules: {
 		'@typescript-eslint/interface-name-prefix': [1, { "prefixWithI": "always" }],
 		'@typescript-eslint/explicit-function-return-type': 0,
-		"filenames/match-exported": [2, [ null, "camel" ] ]
+        "filenames/match-exported": [2, [ null, "camel" ] ],
+        "prettier/prettier": ["error", {
+            "endOfLine": "auto",
+        }]
 	},
 	ignorePatterns: ["lib/"]
   };

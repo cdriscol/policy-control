@@ -7,7 +7,7 @@ import * as chai from "chai";
 // test sources
 import pc, { ILoaderConfig, IDecisionRequest, IRuleConfig, IPolicyConfig, setLogLevel } from "../index";
 import { and, or } from "../rules";
-import { PermissionResponse } from "../core/DecisionResponse";
+import { PermissionResponse } from "../core/AuthorizationDecision";
 import { IDecisionContext } from "../core/IDecisionRequest";
 
 // debug tests
@@ -87,10 +87,7 @@ const policy1: IPolicyConfig<User, Resource> = {
 };
 
 // an example pep with 1 policy
-const pep = pc<User, Resource, ICustomContext>()
-    .action("create")
-    .resourceType("test")
-    .policies([policy1]);
+const pep = pc<User, Resource, ICustomContext>().action("create").resourceType("test").policies([policy1]);
 
 describe("integration tests", () => {
     it("works", async () => {
@@ -102,7 +99,7 @@ describe("integration tests", () => {
             .context({
                 locals: resLocals,
             })
-            .decide({
+            .authorize({
                 user: {
                     id: "userId",
                     email: "test@test.com",

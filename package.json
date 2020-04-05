@@ -10,18 +10,18 @@
   "types": "./lib/index.d.ts",
   "engines": {
     "node": "12",
-    "yarn": "^1.19"
+    "yarn": "^1.22"
   },
   "files": [
     "lib"
   ],
   "scripts": {
     "prepublish": "yarn build",
-    "preinstall": "use-yarn &>/dev/null || (npm install -g use-yarn && use-yarn)",
     "prebuild": "rm -rf lib",
     "build": "tsc -p tsconfig.build.json",
     "check-compilation": "tsc -p tsconfig.json",
-    "coverage": "nyc yarn test",
+    "codecov": "nyc report --reporter=text-lcov > coverage.lcov",
+    "test-coverage": "nyc yarn test",
     "test": "yarn ts-mocha ./src/__tests__/init.ts \"./src/**/__tests__/**/*.ts\"",
     "test-watch": "yarn test -w",
     "ts-mocha": "mocha --exit -r ts-node/register",
@@ -31,29 +31,28 @@
     "validate": "npm ls"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.9",
+    "@types/chai": "^4.2.11",
     "@types/chai-as-promised": "^7.1.2",
-    "@types/mocha": "^7.0.1",
-    "@types/node": "^13.7.6",
-    "@typescript-eslint/eslint-plugin": "^2.21.0",
-    "@typescript-eslint/parser": "^2.21.0",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^12",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "codecov": "^3.6.5",
     "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-filenames": "^1.3.2",
     "eslint-plugin-prettier": "^3.1.2",
-    "mocha": "^7.1.0",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
     "precommit-hook": "^3.0.0",
-    "prettier": "^1.19.1",
-    "ts-node": "^8.6.2",
+    "prettier": "^2.0.2",
+    "ts-node": "^8.8.2",
     "typescript": "^3.8.2"
   },
   "pre-commit": [
     "lint",
     "check-compilation"
-  ],
-  "dependencies": {
-    "nyc": "^15.0.0"
-  }
+  ]
 }

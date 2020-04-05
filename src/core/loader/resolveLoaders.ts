@@ -9,7 +9,7 @@ export default async function resolveLoaders<U, R>(
     request: IDecisionRequest<U, R>,
 ): Promise<void> {
     if (!configs.length) return;
-    logger.debug(`resolveLoaders loaders:${configs.map(c => c.name).join(",")}`);
+    logger.debug(`resolveLoaders loaders:${configs.map((c) => c.name).join(",")}`);
     await configs.reduce(async (prev, loaderConfig) => {
         const loaderKey = getLoaderKey(loaderConfig, request);
         await prev;
