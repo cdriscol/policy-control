@@ -10,14 +10,13 @@
   "types": "./lib/index.d.ts",
   "engines": {
     "node": "12",
-    "yarn": "^1.19"
+    "yarn": "^1.22"
   },
   "files": [
     "lib"
   ],
   "scripts": {
     "prepublish": "yarn build",
-    "preinstall": "use-yarn &>/dev/null || (npm install -g use-yarn && use-yarn)",
     "prebuild": "rm -rf lib",
     "build": "tsc -p tsconfig.build.json",
     "check-compilation": "tsc -p tsconfig.json",
