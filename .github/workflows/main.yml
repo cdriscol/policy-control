@@ -21,4 +21,6 @@ jobs:
     - name: Build
       run: yarn build
     - name: Test
-      run: yarn test
+      run: yarn test-coverage
+    - name: Upload coverage
+      run: yarn codecov
