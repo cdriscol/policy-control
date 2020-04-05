@@ -87,10 +87,7 @@ const policy1: IPolicyConfig<User, Resource> = {
 };
 
 // an example pep with 1 policy
-const pep = pc<User, Resource, ICustomContext>()
-    .action("create")
-    .resourceType("test")
-    .policies([policy1]);
+const pep = pc<User, Resource, ICustomContext>().action("create").resourceType("test").policies([policy1]);
 
 describe("integration tests", () => {
     it("works", async () => {
@@ -99,19 +96,19 @@ describe("integration tests", () => {
 
         // calling decide on the PEP with user, resource, and a Loader with res locals
         const result = await pep
-        	.context({
+            .context({
                 locals: resLocals,
-            }).authorize({
-            user: {
-                id: "userId",
-                email: "test@test.com",
-            },
-            resource: {
-                id: "resourceId",
-                createdById: "userId",
-            },
-            loaders: [createPcLoader1(resLocals)],
-        });
+            })
+            .authorize({
+                user: {
+                    id: "userId",
+                    email: "test@test.com",
+                },
+                resource: {
+                    id: "resourceId",
+                    createdById: "userId",
+                },
+            });
         chai.expect(result.response).to.equal(PermissionResponse.Deny);
     });
 });
