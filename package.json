@@ -1,6 +1,6 @@
 {
   "name": "policy-control",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Policy based access control",
   "author": "cdriscol <drizkol@gmail.com>",
   "license": "MIT",

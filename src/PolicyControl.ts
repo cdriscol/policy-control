@@ -16,7 +16,7 @@ import { ILoaderStore } from "./core/loader";
 
 export type IResourceType = string | number;
 
-export interface IPolicyControlOptions<U, R, C extends IDecisionContext = IDecisionContext> {
+export interface IPolicyControlOptions<U, R, C> {
     // policies that will be matched and evaluated
     policies: IPolicyConfig<U, R>[];
     // user making request
@@ -59,7 +59,7 @@ export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionC
     private _store: ILoaderStore;
     private _context: Partial<C>;
 
-    constructor(options: Partial<IPolicyControlOptions<U, R>> = {}) {
+    constructor(options: Partial<IPolicyControlOptions<U, R, C>> = {}) {
         this._policies = options.policies || [];
         this._user = options.user;
         this._resource = options.resource;
@@ -68,7 +68,7 @@ export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionC
         this._decider = options.decider || denyOverGrant;
         this._loaders = options.loaders || [];
         this._store = new LoaderStore();
-        this._context = {};
+        this._context = options.context || {};
     }
 
     public policies(policies: IPolicyConfig<U, R>[]) {
@@ -156,7 +156,7 @@ export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionC
         return decider(filteredPolicies, request);
     }
 
-    private validate(options: Partial<IPolicyControlOptions<U, R>> = {}): void {
+    private validate(options: Partial<IPolicyControlOptions<U, R, C>> = {}): void {
         const missingFields: string[] = [];
         if (!(options.policies || this._policies)) missingFields.push("policies");
         if (!(options.user || this._user)) missingFields.push("user");
