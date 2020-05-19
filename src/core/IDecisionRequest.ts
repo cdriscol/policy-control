@@ -1,4 +1,3 @@
-import { Actions } from "./Actions";
 import { ILoaderStore } from "./loader";
 
 export interface IDecisionContext {
@@ -14,7 +13,7 @@ export interface IDecisionRequest<U, R, C extends IDecisionContext = IDecisionCo
     // type of resource the user is trying to act on
     resourceType: number | string;
     // action the user is taking
-    action: Actions;
+    action: number | string;
     // data from all the Loaders stored in this context
     context: C;
 }

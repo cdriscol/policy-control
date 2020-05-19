@@ -2,7 +2,6 @@ import {
     filterPolicies,
     IPolicyConfig,
     IDecider,
-    Actions,
     IDecisionRequest,
     IAuthorizationDecision,
     LoaderStore,
@@ -27,7 +26,7 @@ export interface IPolicyControlOptions<U, R, C extends IDecisionContext = IDecis
     // resource type the user is acting on
     resourceType: IResourceType;
     // the action the user is taking
-    action: Actions;
+    action: number | string;
     // the decider function that will evaluate policies and make a final decision
     decider: IDecider;
     // loaders to load data before policies are run
@@ -41,7 +40,7 @@ export interface IPolicyControl<U, R, C extends IDecisionContext = IDecisionCont
     resource(resource: R): this;
     policies(policies: IPolicyConfig<U, R>[]): this;
     decider(decider: IDecider): this;
-    action(action: Actions): this;
+    action(action: number | string): this;
     resourceType(resourceType: IResourceType): this;
     loaders(loaders: ILoaderConfig<U, R>[]): this;
     context(context: C): this;
@@ -54,7 +53,7 @@ export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionC
     private _user: U | undefined;
     private _resource: R | undefined;
     private _resourceType: IResourceType | undefined;
-    private _action: Actions | undefined;
+    private _action: number | string | undefined;
     private _decider: IDecider;
     private _loaders: ILoaderConfig<U, R>[];
     private _store: ILoaderStore;
@@ -95,7 +94,7 @@ export default class PolicyControl<U, R, C extends IDecisionContext = IDecisionC
         return this;
     }
 
-    public action(action: Actions) {
+    public action(action: number | string) {
         logger.debug(`PolicyControl.action ${JSON.stringify(action)}`);
         this._action = action;
         return this;
