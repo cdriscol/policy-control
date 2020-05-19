@@ -80,8 +80,8 @@ const falseRule: IRuleConfig<User, Resource> = {
 // an example policy
 const policy1: IPolicyConfig<User, Resource> = {
     name: "policy1",
-    resourceTypes: ["something", "test"],
-    actionTypes: ["create"],
+    resources: ["something", "test"],
+    actions: ["create"],
     // use rule combinators to combine complex rules
     rules: [and([trueRule, or([nullRule, falseRule])])],
 };

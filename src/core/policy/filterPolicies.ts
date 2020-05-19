@@ -5,8 +5,8 @@ const WILDCARD = "*";
 function policyMatchFilter<U, R>(resourceType: number | string, actionType: number | string) {
     return (policy: IPolicyConfig<U, R>): boolean => {
         logger.debug(`filterPolicies.policyMatchFilter policy:${JSON.stringify(policy)}`);
-        const matchesAction = policy.actionTypes.some((at) => at === actionType);
-        const matchesResourceType = policy.resourceTypes.some((rt) => rt === resourceType || rt === WILDCARD);
+        const matchesAction = policy.actions.some((at) => at === actionType);
+        const matchesResourceType = policy.resources.some((rt) => rt === resourceType || rt === WILDCARD);
         const isMatch = matchesAction && matchesResourceType;
         logger.debug(`filterPolicies.policyMatchFilter result:${isMatch}`);
         return isMatch;
