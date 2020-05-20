@@ -1,6 +1,6 @@
 # policy-control ![CI](https://github.com/cdriscol/policy-control/workflows/CI/badge.svg?branch=master) [![codecov](https://codecov.io/gh/cdriscol/policy-control/branch/master/graph/badge.svg)](https://codecov.io/gh/cdriscol/policy-control)
 <!-- TODO -->
-**policy-control** helps you _decide_ if a _user_ is authorized to _act_ on a _resource_. No assumptions are made about your data or how you make authorization decisions. You are in full control of how your application makes authroizations decisions. With **policy-control** policies, you are in full control of how your application makes authroizations decisions. Policies allow you to choose what _action_, _resource_, _data_, and _rules_ you need to make a decision and the rest is taken care of.
+**policy-control** helps you _decide_ if a _user_ is authorized to _act_ on a _resource_. No assumptions are made about your data or how you make authorization decisions. With **policy-control** policies, you are in full control of how your application makes authroizations decisions. Policies allow you to choose what _action_, _resource_, _data_, and _rules_ you need to make a decision and the rest is taken care of.
 
 <!-- TODO -->
 ## Getting started
