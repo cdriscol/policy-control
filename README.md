@@ -29,7 +29,17 @@ A **decider** can evaluate and reduce a set of **policies** to an **authorizatio
 ### Authorization Decision
 An **authorization decision** returns a permission response (Allow, Deny, Indeterminate).
 
+## Decision Flow
 <!-- TODO -->
+Each authorization decision follows the same flow and can be demonstrated by a simple authorized GET request:
+1. Alice does GET on /post/123.
+1. API receives call and authenticates Alice.
+1. API asks policy control for a decision, _Is Alice authorized to read post 123?_
+1. Policy Control finds and applies any policies for reading posts.
+1. Each policy loads necessary attributes, evaluates rules, and returns a decision.
+1. Policy decisions are reduced to a final authorization decision (e.g. Allow, Deny, Indeterminate)
+1. If decision is Allow the request is continued, otherwise an authorization error (401) is thrown.
+
 ## Examples (WIP)
 Below are several examples intended to help you see how **policy-control** can be used in your project:
 
